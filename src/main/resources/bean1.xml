@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- aop 入门,配置目标对象:增强的对象  -->
+    <bean id="productDao" class="com.itheima.ivy.aopxml.ProductImpl"/>
+
+    <!-- 吧切面类交给Spring管理  -->
+    <bean id="myAspect" class="com.itheima.ivy.aopxml.MyAspectXML"/>
+
+    <!-- 通过AOP的配置完成对目标类产生代理  -->
+    <aop:config>
+        <!--  表达式配置哪些类哪些方法需要代理  -->
+        <aop:pointcut id="pointcut1" expression="execution(* com.itheima.ivy.aopxml.ProductImpl.save(..))"/>
+        <aop:pointcut id="pointcut2" expression="execution(* com.itheima..ivy.aopxml.ProductImpl.delete(..))"/>
+        <aop:pointcut id="pointcut3" expression="execution(* com.itheima..ivy.aopxml.ProductImpl.update(..))"/>
+        <aop:pointcut id="pointcut4" expression="execution(* com.itheima..ivy.aopxml.ProductImpl.query(..))"/>
+        <aop:aspect ref="myAspect">
+            <!-- 前置通知-  -->
+            <aop:before method="checkPri" pointcut-ref="pointcut1"/>
+            <!-- 后置通知  -->
+            <aop:after-returning method="logPrint" pointcut-ref="pointcut2" returning="result"/>
+
+            <!-- 环绕通知 -->
+            <aop:around method="around" pointcut-ref="pointcut3"/>
+
+            <!-- 最后通知 -->
+            <aop:after method="after" pointcut-ref="pointcut3"/>
+            <aop:after method="after" pointcut-ref="pointcut2"/>
+
+            <!-- 异常通知  -->
+            <aop:after-throwing method="afterThrowing" pointcut-ref="pointcut4" throwing="ex"/>
+
+        </aop:aspect>
+    </aop:config>
+
+
+</beans>
